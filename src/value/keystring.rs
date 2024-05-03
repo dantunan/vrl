@@ -112,7 +112,7 @@ mod lua {
     use mlua::prelude::LuaResult;
     use mlua::{FromLua, IntoLua, Lua, Value as LuaValue};
 
-    use super::KeyString;
+    use super::*;
 
     impl<'a> FromLua<'a> for KeyString {
         fn from_lua(value: LuaValue<'a>, lua: &'a Lua) -> LuaResult<Self> {

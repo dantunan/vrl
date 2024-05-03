@@ -67,7 +67,6 @@ cfg_if::cfg_if! {
         mod encode_key_value;
         mod encode_logfmt;
         mod encode_percent;
-        mod encode_proto;
         mod encode_punycode;
         mod encode_snappy;
         mod encode_zlib;
@@ -150,7 +149,6 @@ cfg_if::cfg_if! {
         mod parse_linux_authorization;
         mod parse_logfmt;
         mod parse_nginx_log;
-        mod parse_proto;
         mod parse_query_string;
         mod parse_regex;
         mod parse_regex_all;
@@ -177,7 +175,6 @@ cfg_if::cfg_if! {
         mod sha1;
         mod sha2;
         mod sha3;
-        mod sieve;
         mod slice;
         mod split;
         mod starts_with;
@@ -204,9 +201,7 @@ cfg_if::cfg_if! {
         mod unique;
         mod unnest;
         mod upcase;
-        mod uuid_from_friendly_id;
         mod uuid_v4;
-        mod uuid_v7;
         mod values;
 
         // -----------------------------------------------------------------------------
@@ -241,7 +236,6 @@ cfg_if::cfg_if! {
         pub use encode_key_value::EncodeKeyValue;
         pub use encode_logfmt::EncodeLogfmt;
         pub use encode_percent::EncodePercent;
-        pub use encode_proto::EncodeProto;
         pub use encode_punycode::EncodePunycode;
         pub use encode_snappy::EncodeSnappy;
         pub use encode_zlib::EncodeZlib;
@@ -322,7 +316,6 @@ cfg_if::cfg_if! {
         pub use parse_linux_authorization::ParseLinuxAuthorization;
         pub use parse_logfmt::ParseLogFmt;
         pub use parse_nginx_log::ParseNginxLog;
-        pub use parse_proto::ParseProto;
         pub use parse_query_string::ParseQueryString;
         pub use parse_regex::ParseRegex;
         pub use parse_regex_all::ParseRegexAll;
@@ -348,7 +341,6 @@ cfg_if::cfg_if! {
         pub use set::Set;
         pub use sha2::Sha2;
         pub use sha3::Sha3;
-        pub use sieve::Sieve;
         pub use slice::Slice;
         pub use split::Split;
         pub use starts_with::StartsWith;
@@ -374,9 +366,7 @@ cfg_if::cfg_if! {
         pub use unique::Unique;
         pub use unnest::Unnest;
         pub use upcase::Upcase;
-        pub use uuid_from_friendly_id::UuidFromFriendlyId;
         pub use uuid_v4::UuidV4;
-        pub use uuid_v7::UuidV7;
         pub use values::Values;
         pub use self::array::Array;
         pub use self::md5::Md5;
@@ -419,7 +409,6 @@ pub fn all() -> Vec<Box<dyn Function>> {
         Box::new(EncodeKeyValue),
         Box::new(EncodeLogfmt),
         Box::new(EncodePercent),
-        Box::new(EncodeProto),
         Box::new(EncodePunycode),
         Box::new(EncodeSnappy),
         Box::new(EncodeZlib),
@@ -501,7 +490,6 @@ pub fn all() -> Vec<Box<dyn Function>> {
         Box::new(ParseLinuxAuthorization),
         Box::new(ParseLogFmt),
         Box::new(ParseNginxLog),
-        Box::new(ParseProto),
         Box::new(ParseQueryString),
         Box::new(ParseRegex),
         Box::new(ParseRegexAll),
@@ -528,7 +516,6 @@ pub fn all() -> Vec<Box<dyn Function>> {
         Box::new(Sha1),
         Box::new(Sha2),
         Box::new(Sha3),
-        Box::new(Sieve),
         Box::new(Slice),
         Box::new(Split),
         Box::new(StartsWith),
@@ -555,9 +542,7 @@ pub fn all() -> Vec<Box<dyn Function>> {
         Box::new(Unique),
         Box::new(Unnest),
         Box::new(Upcase),
-        Box::new(UuidFromFriendlyId),
         Box::new(UuidV4),
-        Box::new(UuidV7),
         Box::new(Values),
     ]
 }

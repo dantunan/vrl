@@ -44,17 +44,17 @@ impl Function for IsEmpty {
             },
             Example {
                 title: "empty array",
-                source: "is_empty([])",
+                source: r#"is_empty([])"#,
                 result: Ok("true"),
             },
             Example {
                 title: "empty object",
-                source: "is_empty({})",
+                source: r#"is_empty({})"#,
                 result: Ok("true"),
             },
             Example {
                 title: "non-empty array",
-                source: "is_empty([1,2,3])",
+                source: r#"is_empty([1,2,3])"#,
                 result: Ok("false"),
             },
         ]

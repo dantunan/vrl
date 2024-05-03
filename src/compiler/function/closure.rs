@@ -1,9 +1,10 @@
 use std::collections::BTreeMap;
 
+use crate::compiler::ExpressionError;
 use crate::compiler::{
     state::RuntimeState,
     value::{Kind, VrlValueConvert},
-    Context, ExpressionError,
+    Context,
 };
 use crate::parser::ast::Ident;
 use crate::value::{
@@ -176,12 +177,7 @@ where
         let old_key = insert(ctx.state_mut(), key_ident, cloned_key.into());
         let old_value = insert(ctx.state_mut(), value_ident, cloned_value);
 
-        let result = match (self.runner)(ctx) {
-            Ok(value) | Err(ExpressionError::Return { value, .. }) => Ok(value),
-            err @ Err(_) => err,
-        };
-
-        let value = result?;
+        let value = (self.runner)(ctx)?;
 
         cleanup(ctx.state_mut(), key_ident, old_key);
         cleanup(ctx.state_mut(), value_ident, old_value);

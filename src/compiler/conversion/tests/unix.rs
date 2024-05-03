@@ -1,5 +1,5 @@
 use bytes::Bytes;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, TimeZone as _, Utc};
 use chrono_tz::{Australia, Tz};
 use ordered_float::NotNan;
 
@@ -54,7 +54,9 @@ fn timestamp_param_conversion() {
 }
 
 fn dateref() -> DateTime<Utc> {
-    DateTime::from_timestamp(981_173_106, 0).expect("invalid timestamp")
+    Utc.from_utc_datetime(
+        &NaiveDateTime::from_timestamp_opt(981_173_106, 0).expect("invalid timestamp"),
+    )
 }
 
 #[allow(clippy::trait_duplication_in_bounds)] // appears to be a false positive

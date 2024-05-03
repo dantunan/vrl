@@ -93,14 +93,11 @@ impl Runtime {
 
         let mut ctx = Context::new(target, &mut self.state, timezone);
 
-        match program.resolve(&mut ctx) {
-            Ok(value) | Err(ExpressionError::Return { value, .. }) => Ok(value),
-            Err(
-                err @ (ExpressionError::Abort { .. }
-                | ExpressionError::Fallible { .. }
-                | ExpressionError::Missing { .. }),
-            ) => Err(Terminate::Abort(err)),
-            Err(err @ ExpressionError::Error { .. }) => Err(Terminate::Error(err)),
-        }
+        program.resolve(&mut ctx).map_err(|err| match err {
+            ExpressionError::Abort { .. }
+            | ExpressionError::Fallible { .. }
+            | ExpressionError::Missing { .. } => Terminate::Abort(err),
+            err @ ExpressionError::Error { .. } => Terminate::Error(err),
+        })
     }
 }

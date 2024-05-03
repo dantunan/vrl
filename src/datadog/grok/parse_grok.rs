@@ -136,23 +136,23 @@ mod tests {
         let rules = parse_grok_rules(
             // patterns
             &[
-                "%{access.common}".to_string(),
+                r#"%{access.common}"#.to_string(),
                 r#"%{access.common} (%{number:duration:scale(1000000000)} )?"%{_referer}" "%{_user_agent}"( "%{_x_forwarded_for}")?.*"#.to_string()
             ],
             // aliases
             btreemap! {
                 "access.common" => r#"%{_client_ip} %{_ident} %{_auth} \[%{_date_access}\] "(?>%{_method} |)%{_url}(?> %{_version}|)" %{_status_code} (?>%{_bytes_written}|-)"#.to_string(),
                 "_auth" => r#"%{notSpace:http.auth:nullIf("-")}"#.to_string(),
-                "_bytes_written" => "%{integer:network.bytes_written}".to_string(),
-                "_client_ip" => "%{ipOrHost:network.client.ip}".to_string(),
+                "_bytes_written" => r#"%{integer:network.bytes_written}"#.to_string(),
+                "_client_ip" => r#"%{ipOrHost:network.client.ip}"#.to_string(),
                 "_version" => r#"HTTP\/%{regex("\\d+\\.\\d+"):http.version}"#.to_string(),
-                "_url" => "%{notSpace:http.url}".to_string(),
-                "_ident" => "%{notSpace:http.ident}".to_string(),
+                "_url" => r#"%{notSpace:http.url}"#.to_string(),
+                "_ident" => r#"%{notSpace:http.ident}"#.to_string(),
                 "_user_agent" => r#"%{regex("[^\\\"]*"):http.useragent}"#.to_string(),
-                "_referer" => "%{notSpace:http.referer}".to_string(),
-                "_status_code" => "%{integer:http.status_code}".to_string(),
-                "_method" => "%{word:http.method}".to_string(),
-                "_date_access" => "%{notSpace:date_access}".to_string(),
+                "_referer" => r#"%{notSpace:http.referer}"#.to_string(),
+                "_status_code" => r#"%{integer:http.status_code}"#.to_string(),
+                "_method" => r#"%{word:http.method}"#.to_string(),
+                "_date_access" => r#"%{notSpace:date_access}"#.to_string(),
                 "_x_forwarded_for" => r#"%{regex("[^\\\"]*"):http._x_forwarded_for:nullIf("-")}"#.to_string()}).expect("couldn't parse rules");
         let parsed = parse_grok(r#"127.0.0.1 - frank [13/Jul/2016:10:55:36] "GET /apache_pb.gif HTTP/1.0" 200 2326 0.202 "http://www.perdu.com/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36" "-""#, &rules).unwrap();
 
@@ -265,7 +265,7 @@ mod tests {
             )
             .unwrap_err()
             .to_string(),
-            "unknown filter 'unknownFilter'"
+            r#"unknown filter 'unknownFilter'"#
         );
     }
 
@@ -275,7 +275,7 @@ mod tests {
             parse_grok_rules(&["%{regex(1):field}".to_string()], BTreeMap::new())
                 .unwrap_err()
                 .to_string(),
-            "invalid arguments for the function 'regex'"
+            r#"invalid arguments for the function 'regex'"#
         );
     }
 
@@ -285,7 +285,7 @@ mod tests {
             parse_grok_rules(&["%{data:field:scale()}".to_string()], BTreeMap::new())
                 .unwrap_err()
                 .to_string(),
-            "invalid arguments for the function 'scale'"
+            r#"invalid arguments for the function 'scale'"#
         );
     }
 
@@ -339,7 +339,7 @@ mod tests {
             // ignore non-map root-level fields
             (
                 "%{notSpace:standalone_field} %{data::integer}",
-                "value1 1",
+                r#"value1 1"#,
                 Ok(Value::from(btreemap! {
                     "standalone_field" => Value::Bytes("value1".into()),
                 })),
@@ -347,7 +347,7 @@ mod tests {
             // empty map if fails
             (
                 "%{data::json}",
-                "not a json",
+                r#"not a json"#,
                 Ok(Value::from(BTreeMap::new())),
             ),
         ]);
@@ -358,7 +358,7 @@ mod tests {
         // empty map for filters like json
         test_full_grok(vec![(
             "%{notSpace:field1:integer} %{data:field2:json}",
-            "not_a_number not a json",
+            r#"not_a_number not a json"#,
             Ok(Value::from(BTreeMap::new())),
         )]);
     }
@@ -404,11 +404,11 @@ mod tests {
     fn error_on_circular_dependency() {
         let err = parse_grok_rules(
             // patterns
-            &["%{pattern1}".to_string()],
+            &[r#"%{pattern1}"#.to_string()],
             // aliases with a circular dependency
             btreemap! {
-            "pattern1" => "%{pattern2}".to_string(),
-            "pattern2" => "%{pattern1}".to_string()},
+            "pattern1" => r#"%{pattern2}"#.to_string(),
+            "pattern2" => r#"%{pattern1}"#.to_string()},
         )
         .unwrap_err();
         assert_eq!(
@@ -545,7 +545,7 @@ mod tests {
             )
             .unwrap_err()
             .to_string(),
-            "invalid arguments for the function 'date'"
+            r#"invalid arguments for the function 'date'"#
         );
         assert_eq!(
             parse_grok_rules(
@@ -554,7 +554,7 @@ mod tests {
             )
             .unwrap_err()
             .to_string(),
-            "invalid arguments for the function 'date'"
+            r#"invalid arguments for the function 'date'"#
         );
     }
 
@@ -626,13 +626,13 @@ mod tests {
         test_full_grok(vec![
             // not an array
             (
-                "%{data:field:array}",
+                r#"%{data:field:array}"#,
                 "abc",
                 Ok(Value::Object(BTreeMap::new())),
             ),
             // failed to apply value filter(values are strings)
             (
-                "%{data:field:array(scale(10))}",
+                r#"%{data:field:array(scale(10))}"#,
                 "[a,b]",
                 Ok(Value::Object(BTreeMap::new())),
             ),
@@ -665,21 +665,21 @@ mod tests {
             ),
             (
                 "%{data::keyvalue}",
-                "'key'='valueStr'",
+                r#"'key'='valueStr'"#,
                 Ok(Value::from(btreemap! {
                    "key" => "valueStr"
                 })),
             ),
             (
                 "%{data::keyvalue}",
-                "<key>=<valueStr>",
+                r#"<key>=<valueStr>"#,
                 Ok(Value::from(btreemap! {
                     "key" => "valueStr"
                 })),
             ),
             (
                 r#"%{data::keyvalue(":")}"#,
-                "key:valueStr",
+                r#"key:valueStr"#,
                 Ok(Value::from(btreemap! {
                     "key" => "valueStr"
                 })),
@@ -693,21 +693,21 @@ mod tests {
             ),
             (
                 r#"%{data::keyvalue(":", "/")}"#,
-                "/key:/valueStr",
+                r#"/key:/valueStr"#,
                 Ok(Value::from(btreemap! {
                     "/key" => "/valueStr"
                 })),
             ),
             (
                 r#"%{data::keyvalue(":=", "", "{}")}"#,
-                "key:={valueStr}",
+                r#"key:={valueStr}"#,
                 Ok(Value::from(btreemap! {
                     "key" => "valueStr"
                 })),
             ),
             (
                 r#"%{data::keyvalue("=", "", "", "|")}"#,
-                "key1=value1|key2=value2",
+                r#"key1=value1|key2=value2"#,
                 Ok(Value::from(btreemap! {
                     "key1" => "value1",
                     "key2" => "value2",
@@ -730,16 +730,16 @@ mod tests {
                 })),
             ),
             (
-                "%{data::keyvalue}",
-                "key1=value1,key2=value2",
+                r#"%{data::keyvalue}"#,
+                r#"key1=value1,key2=value2"#,
                 Ok(Value::from(btreemap! {
                     "key1" => "value1",
                     "key2" => "value2",
                 })),
             ),
             (
-                "%{data::keyvalue}",
-                "key1=value1;key2=value2",
+                r#"%{data::keyvalue}"#,
+                r#"key1=value1;key2=value2"#,
                 Ok(Value::from(btreemap! {
                     "key1" => "value1",
                     "key2" => "value2",
@@ -814,21 +814,21 @@ mod tests {
             ),
             (
                 r#"%{data::keyvalue(":")}"#,
-                "kafka_cluster_status:8ca7b736f0aa43e5",
+                r#"kafka_cluster_status:8ca7b736f0aa43e5"#,
                 Ok(Value::from(btreemap! {
                     "kafka_cluster_status" => "8ca7b736f0aa43e5"
                 })),
             ),
             (
-                "%{data::keyvalue}",
-                "field=2.0e",
+                r#"%{data::keyvalue}"#,
+                r#"field=2.0e"#,
                 Ok(Value::from(btreemap! {
                 "field" => "2.0e"
                 })),
             ),
             (
                 r#"%{data::keyvalue("=", "\\w.\\-_@:")}"#,
-                "IN=eth0 OUT= MAC", // no value
+                r#"IN=eth0 OUT= MAC"#, // no value
                 Ok(Value::from(btreemap! {
                     "IN" => "eth0"
                 })),
@@ -848,10 +848,10 @@ mod tests {
     fn alias_and_main_rule_extract_same_fields_to_array() {
         let rules = parse_grok_rules(
             // patterns
-            &["%{notSpace:field:number} %{alias}".to_string()],
+            &[r#"%{notSpace:field:number} %{alias}"#.to_string()],
             // aliases
             btreemap! {
-                "alias" => "%{notSpace:field:integer}".to_string()
+                "alias" => r#"%{notSpace:field:integer}"#.to_string()
             },
         )
         .expect("couldn't parse rules");
@@ -869,10 +869,10 @@ mod tests {
     fn alias_with_filter() {
         let rules = parse_grok_rules(
             // patterns
-            &["%{alias:field:uppercase}".to_string()],
+            &[r#"%{alias:field:uppercase}"#.to_string()],
             // aliases
             btreemap! {
-                "alias" => "%{notSpace:subfield1} %{notSpace:subfield2:integer}".to_string()
+                "alias" => r#"%{notSpace:subfield1} %{notSpace:subfield2:integer}"#.to_string()
             },
         )
         .expect("couldn't parse rules");
@@ -892,7 +892,7 @@ mod tests {
     #[traced_test]
     fn does_not_emit_error_log_on_alternatives_with_filters() {
         test_full_grok(vec![(
-            "(%{integer:field_int}|%{data:field_str})",
+            r#"(%{integer:field_int}|%{data:field_str})"#,
             "abc",
             Ok(Value::from(btreemap! {
                 "field_str" =>  Value::Bytes("abc".into()),
@@ -914,13 +914,13 @@ mod tests {
                 })),
             ),
             (
-                "%{data:@field-name-with-symbols$}",
+                r#"%{data:@field-name-with-symbols$}"#,
                 "abc",
                 Ok(Value::from(btreemap! {
                 "@field-name-with-symbols$" => "abc"})),
             ),
             (
-                "%{data:@parent.$child}",
+                r#"%{data:@parent.$child}"#,
                 "abc",
                 Ok(Value::from(btreemap! {
                 "@parent" => btreemap! {

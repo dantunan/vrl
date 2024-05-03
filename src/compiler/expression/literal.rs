@@ -220,7 +220,7 @@ impl From<ValueRegex> for Literal {
 // Literal::Null ---------------------------------------------------------------
 
 impl From<()> for Literal {
-    fn from((): ()) -> Self {
+    fn from(_: ()) -> Self {
         Literal::Null
     }
 }

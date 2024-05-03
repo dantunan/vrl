@@ -64,7 +64,7 @@ impl Function for Filter {
             },
             Example {
                 title: "filter array",
-                source: "filter([1, 2]) -> |_index, value| { value < 2 }",
+                source: r#"filter([1, 2]) -> |_index, value| { value < 2 }"#,
                 result: Ok("[1]"),
             },
         ]
@@ -100,7 +100,7 @@ impl Function for Filter {
                 output: Output::Kind(Kind::boolean()),
                 example: Example {
                     title: "filter array",
-                    source: "filter([1, 2]) -> |index, _value| { index == 0 }",
+                    source: r#"filter([1, 2]) -> |index, _value| { index == 0 }"#,
                     result: Ok("[1]"),
                 },
             }],

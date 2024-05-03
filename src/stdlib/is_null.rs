@@ -21,7 +21,7 @@ impl Function for IsNull {
         &[
             Example {
                 title: "array",
-                source: "is_null([1, 2, 3])",
+                source: r#"is_null([1, 2, 3])"#,
                 result: Ok("false"),
             },
             Example {
@@ -31,7 +31,7 @@ impl Function for IsNull {
             },
             Example {
                 title: "null",
-                source: "is_null(null)",
+                source: r#"is_null(null)"#,
                 result: Ok("true"),
             },
         ]

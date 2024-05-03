@@ -1,4 +1,4 @@
-use ExpressionError::{Abort, Error, Fallible, Missing, Return};
+use ExpressionError::{Abort, Error, Fallible, Missing};
 
 use crate::diagnostic::{Diagnostic, DiagnosticMessage, Label, Note, Severity, Span};
 use crate::value::Value;
@@ -10,10 +10,6 @@ pub enum ExpressionError {
     Abort {
         span: Span,
         message: Option<String>,
-    },
-    Return {
-        span: Span,
-        value: Value,
     },
     Error {
         message: String,
@@ -59,7 +55,6 @@ impl DiagnosticMessage for ExpressionError {
     fn code(&self) -> usize {
         match self {
             Abort { .. } => 0,
-            Return { .. } => 0,
             Error { .. } => 0,
             Fallible { .. } => 100,
             Missing { .. } => 900,
@@ -69,7 +64,6 @@ impl DiagnosticMessage for ExpressionError {
     fn message(&self) -> String {
         match self {
             Abort { message, .. } => message.clone().unwrap_or_else(|| "aborted".to_owned()),
-            Return { .. } => "return".to_string(),
             Error { message, .. } => message.clone(),
             Fallible { .. } => "unhandled error".to_string(),
             Missing { .. } => "expression type unavailable".to_string(),
@@ -81,7 +75,6 @@ impl DiagnosticMessage for ExpressionError {
             Abort { span, .. } => {
                 vec![Label::primary("aborted", span)]
             }
-            Return { .. } => Vec::new(),
             Error { labels, .. } => labels.clone(),
             Fallible { span } => vec![
                 Label::primary("expression can result in runtime error", span),
@@ -100,7 +93,6 @@ impl DiagnosticMessage for ExpressionError {
     fn notes(&self) -> Vec<Note> {
         match self {
             Abort { .. } => vec![],
-            Return { .. } => vec![],
             Error { notes, .. } => notes.clone(),
             Fallible { .. } => vec![Note::SeeErrorDocs],
             Missing { .. } => vec![],

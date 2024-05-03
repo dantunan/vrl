@@ -46,17 +46,17 @@ impl Function for Round {
         &[
             Example {
                 title: "round up",
-                source: "round(5.5)",
+                source: r#"round(5.5)"#,
                 result: Ok("6.0"),
             },
             Example {
                 title: "round down",
-                source: "round(5.45)",
+                source: r#"round(5.45)"#,
                 result: Ok("5.0"),
             },
             Example {
                 title: "precision",
-                source: "round(5.45, 1)",
+                source: r#"round(5.45, 1)"#,
                 result: Ok("5.5"),
             },
         ]

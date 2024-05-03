@@ -481,17 +481,17 @@ pub enum Error {
     #[error("this argument must be a static expression")]
     ExpectedStaticExpression { keyword: &'static str, expr: Expr },
 
-    #[error("invalid argument")]
+    #[error(r#"invalid argument"#)]
     InvalidArgument {
         keyword: &'static str,
         value: Value,
         error: &'static str,
     },
 
-    #[error("missing function closure")]
+    #[error(r#"missing function closure"#)]
     ExpectedFunctionClosure,
 
-    #[error("mutation of read-only value")]
+    #[error(r#"mutation of read-only value"#)]
     ReadOnlyMutation { context: String },
 }
 
@@ -575,7 +575,7 @@ impl crate::diagnostic::DiagnosticMessage for Error {
 
             ExpectedFunctionClosure => vec![],
             ReadOnlyMutation { context } => vec![
-                Label::primary("mutation of read-only value", Span::default()),
+                Label::primary(r#"mutation of read-only value"#, Span::default()),
                 Label::context(context, Span::default()),
             ],
         }

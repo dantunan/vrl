@@ -65,10 +65,7 @@ impl Expression for Abort {
     }
 
     fn type_info(&self, state: &TypeState) -> TypeInfo {
-        let returns = self.message.as_ref().map_or(Kind::never(), |message| {
-            message.type_info(state).result.returns().to_owned()
-        });
-        TypeInfo::new(state, TypeDef::never().with_returns(returns))
+        TypeInfo::new(state, TypeDef::never())
     }
 }
 

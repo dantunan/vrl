@@ -1,14 +1,11 @@
 use std::{collections::BTreeMap, fmt, ops::Deref};
 
-use crate::value::{KeyString, Value};
-use crate::{
-    compiler::{
-        expression::{Expr, Resolved},
-        state::{TypeInfo, TypeState},
-        Context, Expression, TypeDef,
-    },
-    value::Kind,
+use crate::compiler::{
+    expression::{Expr, Resolved},
+    state::{TypeInfo, TypeState},
+    Context, Expression, TypeDef,
 };
+use crate::value::{KeyString, Value};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Object {
@@ -50,24 +47,17 @@ impl Expression for Object {
     fn type_info(&self, state: &TypeState) -> TypeInfo {
         let mut state = state.clone();
         let mut fallible = false;
-        let mut returns = Kind::never();
 
         let mut type_defs = BTreeMap::new();
         for (k, expr) in &self.inner {
             let type_def = expr.apply_type_info(&mut state).upgrade_undefined();
-            returns.merge_keep(type_def.returns().clone(), false);
 
             // If any expression is fallible, the entire object is fallible.
             fallible |= type_def.is_fallible();
 
             // If any expression aborts, the entire object aborts
             if type_def.is_never() {
-                return TypeInfo::new(
-                    state,
-                    TypeDef::never()
-                        .maybe_fallible(fallible)
-                        .with_returns(returns),
-                );
+                return TypeInfo::new(state, TypeDef::never().maybe_fallible(fallible));
             }
             type_defs.insert(k.clone(), type_def);
         }
@@ -77,9 +67,7 @@ impl Expression for Object {
             .map(|(field, type_def)| (field.into(), type_def.into()))
             .collect::<BTreeMap<_, _>>();
 
-        let result = TypeDef::object(collection)
-            .maybe_fallible(fallible)
-            .with_returns(returns);
+        let result = TypeDef::object(collection).maybe_fallible(fallible);
         TypeInfo::new(state, result)
     }
 }

@@ -19,7 +19,6 @@ pub use object::Object;
 pub use op::Op;
 pub use predicate::Predicate;
 pub use query::{Query, Target};
-pub use r#return::Return;
 pub use unary::Unary;
 pub use variable::Variable;
 
@@ -40,7 +39,6 @@ mod noop;
 mod not;
 mod object;
 mod op;
-mod r#return;
 pub(crate) mod unary;
 mod variable;
 
@@ -117,7 +115,6 @@ pub enum Expr {
     Noop(Noop),
     Unary(Unary),
     Abort(Abort),
-    Return(Return),
 }
 
 impl Expr {
@@ -125,7 +122,7 @@ impl Expr {
         use container::Variant::{Array, Block, Group, Object};
         use Expr::{
             Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Noop, Op, Query,
-            Return, Unary, Variable,
+            Unary, Variable,
         };
 
         match self {
@@ -145,7 +142,6 @@ impl Expr {
             Noop(..) => "noop",
             Unary(..) => "unary operation",
             Abort(..) => "abort operation",
-            Return(..) => "return",
         }
     }
 
@@ -185,7 +181,7 @@ impl Expression for Expr {
     fn resolve(&self, ctx: &mut Context) -> Resolved {
         use Expr::{
             Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Noop, Op, Query,
-            Return, Unary, Variable,
+            Unary, Variable,
         };
 
         match self {
@@ -200,14 +196,13 @@ impl Expression for Expr {
             Noop(v) => v.resolve(ctx),
             Unary(v) => v.resolve(ctx),
             Abort(v) => v.resolve(ctx),
-            Return(v) => v.resolve(ctx),
         }
     }
 
     fn resolve_constant(&self, state: &TypeState) -> Option<Value> {
         use Expr::{
             Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Noop, Op, Query,
-            Return, Unary, Variable,
+            Unary, Variable,
         };
 
         match self {
@@ -222,14 +217,13 @@ impl Expression for Expr {
             Noop(v) => Expression::resolve_constant(v, state),
             Unary(v) => Expression::resolve_constant(v, state),
             Abort(v) => Expression::resolve_constant(v, state),
-            Return(v) => Expression::resolve_constant(v, state),
         }
     }
 
     fn type_info(&self, state: &TypeState) -> TypeInfo {
         use Expr::{
             Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Noop, Op, Query,
-            Return, Unary, Variable,
+            Unary, Variable,
         };
 
         match self {
@@ -244,7 +238,6 @@ impl Expression for Expr {
             Noop(v) => v.type_info(state),
             Unary(v) => v.type_info(state),
             Abort(v) => v.type_info(state),
-            Return(v) => v.type_info(state),
         }
     }
 }
@@ -253,7 +246,7 @@ impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Expr::{
             Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Noop, Op, Query,
-            Return, Unary, Variable,
+            Unary, Variable,
         };
 
         match self {
@@ -268,7 +261,6 @@ impl fmt::Display for Expr {
             Noop(v) => v.fmt(f),
             Unary(v) => v.fmt(f),
             Abort(v) => v.fmt(f),
-            Return(v) => v.fmt(f),
         }
     }
 }
@@ -338,12 +330,6 @@ impl From<Unary> for Expr {
 impl From<Abort> for Expr {
     fn from(abort: Abort) -> Self {
         Expr::Abort(abort)
-    }
-}
-
-impl From<Return> for Expr {
-    fn from(r#return: Return) -> Self {
-        Expr::Return(r#return)
     }
 }
 

@@ -26,12 +26,12 @@ impl Function for IsBoolean {
             },
             Example {
                 title: "boolean",
-                source: "is_boolean(false)",
+                source: r#"is_boolean(false)"#,
                 result: Ok("true"),
             },
             Example {
                 title: "null",
-                source: "is_boolean(null)",
+                source: r#"is_boolean(null)"#,
                 result: Ok("false"),
             },
         ]

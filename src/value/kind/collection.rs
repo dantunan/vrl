@@ -808,7 +808,7 @@ mod tests {
                 "known single",
                 TestCase {
                     this: BTreeMap::from([("foo".into(), Kind::null())]).into(),
-                    want: "{ foo: null }",
+                    want: r#"{ foo: null }"#,
                 },
             ),
             (
@@ -867,7 +867,7 @@ mod tests {
                 "known single",
                 TestCase {
                     this: BTreeMap::from([(0.into(), Kind::null())]).into(),
-                    want: "[null]",
+                    want: r#"[null]"#,
                 },
             ),
             (
@@ -875,7 +875,7 @@ mod tests {
                 TestCase {
                     this: BTreeMap::from([(0.into(), Kind::null()), (1.into(), Kind::boolean())])
                         .into(),
-                    want: "[null, boolean]",
+                    want: r#"[null, boolean]"#,
                 },
             ),
             (

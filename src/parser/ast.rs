@@ -233,14 +233,13 @@ pub enum Expr {
     Variable(Node<Ident>),
     Unary(Node<Unary>),
     Abort(Node<Abort>),
-    Return(Node<Return>),
 }
 
 impl fmt::Debug for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Expr::{
-            Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Op, Query, Return,
-            Unary, Variable,
+            Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Op, Query, Unary,
+            Variable,
         };
 
         let value = match self {
@@ -254,7 +253,6 @@ impl fmt::Debug for Expr {
             Variable(v) => format!("{v:?}"),
             Unary(v) => format!("{v:?}"),
             Abort(v) => format!("{v:?}"),
-            Return(v) => format!("{v:?}"),
         };
 
         write!(f, "Expr({value})")
@@ -264,8 +262,8 @@ impl fmt::Debug for Expr {
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Expr::{
-            Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Op, Query, Return,
-            Unary, Variable,
+            Abort, Assignment, Container, FunctionCall, IfStatement, Literal, Op, Query, Unary,
+            Variable,
         };
 
         match self {
@@ -279,7 +277,6 @@ impl fmt::Display for Expr {
             Variable(v) => v.fmt(f),
             Unary(v) => v.fmt(f),
             Abort(v) => v.fmt(f),
-            Return(v) => v.fmt(f),
         }
     }
 }
@@ -356,7 +353,7 @@ impl fmt::Display for Literal {
 
         match self {
             String(v) => write!(f, r#""{v}""#),
-            RawString(v) => write!(f, "s'{v}'"),
+            RawString(v) => write!(f, r#"s'{v}'"#),
             Integer(v) => v.fmt(f),
             Float(v) => v.fmt(f),
             Boolean(v) => v.fmt(f),
@@ -486,13 +483,13 @@ impl Group {
 
 impl fmt::Display for Group {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({})", self.0)
+        write!(f, r#"({})"#, self.0)
     }
 }
 
 impl fmt::Debug for Group {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Group({:?})", self.0)
+        write!(f, r#"Group({:?})"#, self.0)
     }
 }
 
@@ -1204,26 +1201,5 @@ impl fmt::Display for Abort {
 impl fmt::Debug for Abort {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Abort({:?})", self.message)
-    }
-}
-
-// -----------------------------------------------------------------------------
-// return
-// -----------------------------------------------------------------------------
-
-#[derive(Clone, PartialEq)]
-pub struct Return {
-    pub expr: Box<Node<Expr>>,
-}
-
-impl fmt::Display for Return {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "return {}", self.expr)
-    }
-}
-
-impl fmt::Debug for Return {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Return({:?})", self.expr)
     }
 }

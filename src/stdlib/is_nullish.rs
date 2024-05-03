@@ -24,7 +24,7 @@ impl Function for IsNullish {
     fn examples(&self) -> &'static [Example] {
         &[Example {
             title: "null",
-            source: "is_nullish(null)",
+            source: r#"is_nullish(null)"#,
             result: Ok("true"),
         }]
     }

@@ -26,7 +26,7 @@ impl Function for IsObject {
             },
             Example {
                 title: "boolean",
-                source: "is_object(true)",
+                source: r#"is_object(true)"#,
                 result: Ok("false"),
             },
             Example {
